@@ -1,6 +1,6 @@
 #Two components change the numbers by stochastic increase and decrease.
-#Simulation of the regulation with reinforcement learning (Fig 1b).
-#For the deterministic regulation (Fig 1c), change the values of amp, add, 
+#Simulation of the regulation with reinforcement learning (Fig 1B).
+#For the deterministic regulation (Fig 1D), change the values of amp, add, 
 import numpy as np
 xAxB = np.array([1, 1])#initial values of x_a and x_b
 target = np.array([1, 2])
