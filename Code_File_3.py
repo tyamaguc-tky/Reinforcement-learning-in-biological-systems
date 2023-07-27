@@ -1,8 +1,7 @@
 #Code for random walk controlling step-length.
 #Simulations in Figure 3. Use also Code_File_4 for visualization. 
 import numpy as np
-
-#For 1-dimensional s-rw in Figure 3b. 
+#For 1-dimensional s-rw in Fig 3B
 #Change init_pos and tmax 
 def random_walk_1D(init_pos=10, tmax=100):
     sl_p = 0.1
@@ -86,11 +85,11 @@ def outside_in(x0, x1, y0, y1, block=50, gap=-20):
                 yc = y1
     return [xc, yc]#output the next postition
 
-# for 2-dimensional s-rw in Figure 3c-f, SupFig 1,3
-# for Figure 2e,f,  activate and return "[traj_x, traj_y]"
-# To set obstacles for Figure 3g-h, activate """--""" parts
-def random_walk_2D(sl_p=0.1, init_pos=10/np.sqrt(2), pow_n=1, tmax=10**5, border=0):
-    target = [0, 0]
+# for 2-dimensional s-rw in Fig 3C-I, SupFig 2, SummaryFig
+# for Fig 2E,F,  activate and return "[traj_x, traj_y]"
+# To set obstacles for Fig 3G-I, activate """--""" parts
+def random_walk_2D(sl_p=0.1, init_pos=10/np.sqrt(2), tar_pos=0, pow_n=1, tmax=10**5, border=0):
+    target = [tar_pos, tar_pos]
     random_direction = np.random.rand(tmax) * 2 * np.pi
     drx = np.cos(random_direction)
     dry = np.sin(random_direction)
@@ -133,8 +132,8 @@ def random_walk_2D(sl_p=0.1, init_pos=10/np.sqrt(2), pow_n=1, tmax=10**5, border
     return r_distance
 
 #Output the trajectory in random_walk_2D
-def random_walk_2D_traj(sl_p=0.1, init_pos=10/np.sqrt(2), pow_n=1, tmax=10**5, border=0):
-    target = [0, 0]
+def random_walk_2D_traj(sl_p=0.1, init_pos=10/np.sqrt(2), tar_pos=0, pow_n=1, tmax=10**5, border=0):
+    target = [tar_pos, tar_pos]
     random_direction = np.random.rand(tmax) * 2 * np.pi
     drx = np.cos(random_direction)
     dry = np.sin(random_direction)
@@ -157,13 +156,13 @@ def random_walk_2D_traj(sl_p=0.1, init_pos=10/np.sqrt(2), pow_n=1, tmax=10**5, b
             yt1 = traj_y[t] + dry[t] * step_length
             [xt1, yt1] = inside_out(x0=traj_x[t], x1=xt1, y0=traj_y[t], y1=yt1, block=border, gap=0)
             """#To set obstacles, the previous 3 lines are replaced by the followings
-            if max(np.abs(xt0),np.abs(yt0)) > 300:
+            if max(np.abs(traj_x[t]),np.abs(traj_y[t])) > 300:
                 [xt1, yt1] = outside_in(x0=traj_x[t], x1=xt1, y0=traj_y[t], y1=yt1, block=300, gap=-50)
                 [xt1, yt1] = inside_out(x0=traj_x[t], x1=xt1, y0=traj_y[t], y1=yt1, block=500, gap=0)
-            elif max(np.abs(xt0),np.abs(yt0)) > 100:
+            elif max(np.abs(traj_x[t]),np.abs(traj_y[t])) > 100:
                 [xt1, yt1] = outside_in(x0=traj_x[t], x1=xt1, y0=traj_y[t], y1=yt1, block=100, gap=50)
                 [xt1, yt1] = inside_out(x0=traj_y[t], x1=xt1, y0=traj_y[t], y1=yt1, block=300, gap=-50)
-            elif max(np.abs(xt0),np.abs(yt0)) > 50:
+            elif max(np.abs(traj_x[t]),np.abs(traj_y[t])) > 50:
                 [xt1, yt1] = outside_in(x0=traj_x[t], x1=xt1, y0=traj_y[t], y1=yt1, block=50, gap=-20)
                 [xt1, yt1] = inside_out(x0=traj_x[t], x1=xt1, y0=traj_y[t], y1=yt1, block=100, gap=50)
             else:
@@ -176,73 +175,75 @@ def random_walk_2D_traj(sl_p=0.1, init_pos=10/np.sqrt(2), pow_n=1, tmax=10**5, b
             r_distance = ((xt1 - target[0])**2 + (yt1 - target[1])**2) ** (1/2)
         else:
             break
-    return np.array([traj_x, traj_y])
+    #distance_traj = ((traj_x-target[0])**2 + (traj_y-target[0])**2)**(1/2)
+    return np.array([traj_x, traj_y])#distance_traj
 
 # for SupFig 2
-def xr_rw(sl_p=0.1, init_pos=10/np.sqrt(2), tmax=10**4):
-    target = [0, 0]
+def xr_rw(sl_p=0.1, init_pos=10/np.sqrt(2),tar_pos=0, tmax=10**4):
+    target = [tar_pos, tar_pos]
     random_size = 1 - 2 * np.random.rand(tmax)
     random_angle = (1 - np.random.rand(tmax) * 2) * np.pi
     dny = np.sin(random_angle)
-    xt = init_pos#x-coordinate of the position
-    yt = init_pos#y-coordinate of the position
+    xt0 = init_pos#x-coordinate of the position
+    yt0 = init_pos#y-coordinate of the position
     for t in range(tmax -1):
-        distance = ((xt - target[0])**2 + (yt - target[1])**2) ** (1/2)
+        distance = ((xt0 - target[0])**2 + (yt0 - target[1])**2) ** (1/2)
         if distance < 10**20:
-            xt += xt * sl_p * random_size[t] 
-            yt += dny[t] * distance * sl_p
+            xt0 += xt0 * sl_p * random_size[t] 
+            yt0 += dny[t] * distance * sl_p
         else:
             break
     return distance
 
-def c_rw(sl_p=0.1, init_pos=10/np.sqrt(2), tmax=10**4):
-    target = [0, 0]
+def c_rw(sl_p=0.1, init_pos=10/np.sqrt(2),tar_pos=0, tmax=10**4):
+    target = [tar_pos, tar_pos]
     random_direction = (1 - np.random.rand(tmax) * 2) * np.pi
-    xt = init_pos#x-coordinate of the position
-    yt = init_pos#y-coordinate of the position
-    distance_pre = ((xt - target[0])**2 + (yt - target[1])**2) ** (1/2)
+    xt0 = init_pos#x-coordinate of the position
+    yt0 = init_pos#y-coordinate of the position
+    distance_pre = ((xt0 - target[0])**2 + (yt0 - target[1])**2) ** (1/2)
     angle = np.random.rand() * 2 * np.pi
     for t in range(tmax -1):
-        distance = ((xt - target[0])**2 + (yt - target[1])**2) ** (1/2)
+        distance = ((xt0 - target[0])**2 + (yt0 - target[1])**2) ** (1/2)
         if distance < 10**20:
             if distance > distance_pre:#wrong direction
                 angle += random_direction[t] * np.random.normal(loc=0, scale=0.5)
             else:#approaching the target
                 angle += random_direction[t] * np.random.normal(loc=0, scale=0.25)
-            xt += np.cos(angle) * distance * sl_p
-            yt += np.sin(angle) * distance * sl_p
+            xt0 += np.cos(angle) * distance * sl_p
+            yt0 += np.sin(angle) * distance * sl_p
         else:
             break
         distance_pre = distance
     return distance
 
-test_n = 1000#10**6 for Fig3b-d #100 for Fig 3h, SupFig 3b #1000 for SupFig 2, 3c
+test_n = 1000#10**6 for Fig3B-D #100 for Fig 3I, SupFig 2B #1000 for SupFig 1, 2C
 result = np.zeros(test_n , dtype=float)
 for test in range(test_n):
-    #result[test] = random_walk_1D(init_pos=10, tmax=100)#Fig 3b. init_pos=1,10,or 100, tmax=100 or 1000
-    result[test] = random_walk_2D(sl_p=0.1,init_pos=10/np.sqrt(2),pow_n=1,tmax=100,border=0)#Fig 3c. init_pos=1/np.sqrt(2),10/np.sqrt(2),or 100/np.sqrt(2), tmax=100 or 1000
-    #result[test] = random_walk_2D(sl_p=0.1,init_pos=10/np.sqrt(2),pow_n=1,tmax=10**3,border=500)#Fig 3d. tmax=10**3, 10**4 (testn=10**6) or 10**5 (testn=10**4)
-    #result[test] = random_walk_2D(sl_p=0.1,init_pos=400,pow_n=1,tmax=10**5,border=500)#Fig 3h. sl_p=0.1, 0.02 or 0.5. Activate obstacles.
-    #result[test] = xr_rw(sl_p=0.1, init_pos=10/np.sqrt(2), tmax=10**3)#SupFig 2. tmax=1000 or 10**4
-    #result[test] = c_rw(sl_p=0.1, init_pos=10/np.sqrt(2), tmax=10**3)#SupFig 2. tmax=1000 or 10**4
-    #result[test] = random_walk_2D(sl_p=0.01,init_pos=10/np.sqrt(2),pow_n=1,tmax=10**5,border=500)#SupFig 3b-c. sl_p=0.5, 0.1, or 0.02 in SupFig 3b.
-    #result[test] = random_walk_2D(sl_p=0.001,init_pos=10/np.sqrt(2),pow_n=2,tmax=10**5,border=500)#SupFig 3c.sl_p=0.01, 0.001, or 0.0001
-    #result[test] = random_walk_2D(sl_p=1,init_pos=10/np.sqrt(2),pow_n=0.5,tmax=10**5,border=500)#SupFig 3c.(sl_p=1, pow_n=0.5) or (sl_p=0.417, pow_n=-1)
+    #result[test] = random_walk_1D(init_pos=10, tmax=100)#Fig 3B. init_pos=1,10,or 100, tmax=100 or 1000
+    result[test] = random_walk_2D(sl_p=0.1,init_pos=10/np.sqrt(2),tar_pos=0,pow_n=1,tmax=100,border=0)#Fig 3C. init_pos=1/np.sqrt(2),10/np.sqrt(2),or 100/np.sqrt(2), tmax=100 or 1000
+    #result[test] = random_walk_2D(sl_p=0.1,init_pos=10/np.sqrt(2),tar_pos=0,pow_n=1,tmax=10**3,border=500)#Fig 3D. tmax=10**3, 10**4 (testn=10**6) or 10**5 (testn=10**4)
+    #result[test] = random_walk_2D(sl_p=0.1,init_pos=400,tar_pos=0,pow_n=1,tmax=10**5,border=500)#Fig 3I 400->0. sl_p=0.1, 0.02 or 0.5. Activate obstacles.
+    #result[test] = random_walk_2D(sl_p=0.1,init_pos=0,tar_pos=400,pow_n=1,tmax=10**5,border=500)#Fig 3I 0->400. sl_p=0.1, 0.02 or 0.5. Activate obstacles.
+    #result[test] = xr_rw(sl_p=0.1, init_pos=10/np.sqrt(2),tar_pos=0,tmax=10**3)#SupFig 1. tmax=1000 or 10**4
+    #result[test] = c_rw(sl_p=0.1, init_pos=10/np.sqrt(2),tar_pos=0,tmax=10**3)#SupFig 1. tmax=1000 or 10**4
+    #result[test] = random_walk_2D(sl_p=0.01,init_pos=10/np.sqrt(2),tar_pos=0,pow_n=1,tmax=10**5,border=500)#SupFig 2B-C. sl_p=0.5, 0.1, or 0.02 in SupFig 2C.
+    #result[test] = random_walk_2D(sl_p=0.001,init_pos=10/np.sqrt(2),tar_pos=0,pow_n=2,tmax=10**5,border=500)#SupFig 2C.sl_p=0.01, 0.001, or 0.0001
+    #result[test] = random_walk_2D(sl_p=1,init_pos=10/np.sqrt(2),pow_n=0.5,tar_pos=0,tmax=10**5,border=500)#SupFig 2C.(sl_p=1, pow_n=0.5) or (sl_p=0.417, pow_n=-1)
 
 print([np.mean(result),np.median(result)])
-# for Figure 3e,f,g, SupFig 1,4, Movie 1
-#traj = random_walk_2D_traj(sl_p=0.1,init_pos=10,pow_n=1,tmax=10**5,border=0)#Fig 3e
-#traj = random_walk_2D_traj(sl_p=0.1,init_pos=10,pow_n=1,tmax=10**7,border=0)#Fig 3f. tmax was breaked at 1000743. For the blue dots, tmax=10**6, border=500
-#traj012 = random_walk_2D_traj(sl_p=0.1,init_pos=400,pow_n=1,tmax=10**3,border=500)#SupFig 1, save 3 trajectories. Without obstacles.
-traj = random_walk_2D_traj(sl_p=0.1,init_pos=400,pow_n=1,tmax=10**5,border=500)#SupFig 4. Activate obstacles.
-
+# for Fig 3E-H Movie 1-2, SummaryFig
+#traj = random_walk_2D_traj(sl_p=0.1,init_pos=10,tar_pos=0,pow_n=1,tmax=10**5,border=0)#Fig 3E
+#traj = random_walk_2D_traj(sl_p=0.1,init_pos=10,tar_pos=0,pow_n=1,tmax=10**7,border=0)#Fig 3F. tmax was breaked at 1000743. For the blue dots, tmax=10**6, border=500
+traj = random_walk_2D_traj(sl_p=0.1,init_pos=400,tar_pos=0,pow_n=1,tmax=10**5,border=500)#Fig 3G Movie 1, Activate obstacles.
+#traj = random_walk_2D_traj(sl_p=0.1,init_pos=0,tar_pos=400,pow_n=1,tmax=10**5,border=500)#Fig 3H.Movie 2 Activate obstacles.
+#traj012 = random_walk_2D_traj(sl_p=0.1,init_pos=400,tar_pos=0,pow_n=1,tmax=10**3,border=500)#SummaryFig, save 3 trajectories. Without obstacles.
 #np.savez_compressed('data0', traj_s=traj)
 #loaded = np.load('data0.npz')
 #traj = loaded['traj_s']#[:,:1000]
 
 #trajectory
 import matplotlib.pyplot as plt
-#To make Figure 3e, g and SupFig4# for Fig 3g blocks should be activated
+#To make Fig 3E,G,H # for Fig 3G,H blocks should be activated
 #block1=np.array([[-200, -300], [300,-300],[300,300],[-300,300],[-300,-300],[-250,-300]]).T
 #block2=np.array([[0, 100], [-100,100],[-100,-100],[100,-100],[100,100],[50,100]]).T
 #block3=np.array([[-10, -50], [50,-50],[50,50],[-50,50],[-50,-50],[-30,-50]]).T
@@ -250,10 +251,10 @@ f = plt.figure()
 f.set_figwidth(5)
 f.set_figheight(5)
 plt.rcParams["font.size"] = 18
-t0=0#13000#change to the indicated starting time point
-t1 =t0 + 1000#3000#tmaxchange to the indicated end time point#1000 for supFig1
+t0=0#30000#change to the indicated starting time point
+t1 =t0 + 1000#3000#tmax#change to the indicated end time point#1000 for SummaryFig
 plt.plot(traj[0,t0:t1], traj[1,t0:t1],linewidth=0.5)
-plt.plot(traj[0,t0], traj[1,t0], 'kx')#'gs')
+plt.plot(traj[0,t0], traj[1,t0], 'gs')#'kx')#
 plt.plot(traj[0,t1-1], traj[1,t1-1], 'ro')
 #plt.plot(traj1[0,t0:t1], traj1[1,t0:t1],linewidth=0.5)
 #plt.plot(traj1[0,t1-1], traj1[1,t1-1], 'ro')
