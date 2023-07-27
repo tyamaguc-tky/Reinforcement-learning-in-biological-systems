@@ -14,13 +14,13 @@ result = loaded['distance_data']
 traj = loaded['traj_s']#[:,t0:t1+1]
 traj_b = loaded['traj_b_s']#[:,t0:t1+1]
 
-#To make histogram in Figure 3b-d
+#To make histogram in Figure 3B-D
 result10 = np.log10(result)
 (hist, bins, _) = plt.hist(result10, bins=1000,range=(-2,3))#range=(-2,3) or (-2,4)
 plt.show()
 print([np.sum(result < 10**-2), np.sum(result > 10**3)])#np.sum(result>10**4)])
 
-#To make fitting curve in Fig 3f
+#To make fitting curve in Fig 3F
 """
 # To estimate parameter values of fitting curves, curve fitting package from scipy was used
 #import curve fitting package from scipy
@@ -93,7 +93,7 @@ plt.xlim(-500, 500)#can be changed or removed
 plt.ylim(-500, 500)#can be changed or removed
 plt.show()
 
-#Animation for Video1
+#Animation for Movie 1-2
 import matplotlib.animation as animation
 block1=np.array([[-200, -300], [300,-300],[300,300],[-300,300],[-300,-300],[-250,-300]]).T
 block2=np.array([[0, 100], [-100,100],[-100,-100],[100,-100],[100,100],[50,100]]).T
@@ -109,7 +109,7 @@ plt.plot(block2[0,:],block2[1,:], '-k',linewidth=3)
 plt.plot(block3[0,:],block3[1,:], '-k',linewidth=3)
 g = plt.plot(traj[0,0], traj[1,0], 'ro')
 graphs.append(g)#(g)
-for t in range(40001):#len(traj[0,:])):
+for t in range(40001):#5001)#len(traj[0,:])):
     if t%10 == 0:
         g0 = plt.plot(traj[0,max(t-10,0):t+1], traj[1,max(t-10,0):t+1],'b--')
         g = plt.plot(traj[0,t], traj[1,t], 'ro')
@@ -117,3 +117,4 @@ for t in range(40001):#len(traj[0,:])):
 anim = animation.ArtistAnimation(fig, graphs, interval=20, repeat=False)
 plt.show()
 #anim.save('movie0.gif', writer='pillow')
+#gif files are coverted to MP4 in Adobe web page
