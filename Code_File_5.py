@@ -1,12 +1,12 @@
-#Pattern generation in Figure 4 and SupFig 5
+#Pattern generation in Figure 4, SupFig 3, Movie 3
 import numpy as np
 import matplotlib.pyplot as plt
 
 def sigmoid(x, a=0.1):
     return 1 / (1 + np.exp(-a * x))
 
-border_x = 500#1000 in Figure 4f,i,j and movie 2
-border_y = 500#200 in Figure 4f,i,j and movie 2
+border_x = 500#1000 in Figure 4F,I,J, SupFig 3D and movie 3
+border_y = 500#200 in Figure 4f,i,j, SupFig 3D and movie 3
 frame = 50#Matrix is produced if the location of the cell is not near the boundary.
 cell_n = 1000#the number of each type of cells 
 rand_index = np.random.permutation(np.arange(0,(border_x-2*frame)*(border_y-2*frame)))[:cell_n*2]
@@ -25,8 +25,8 @@ for i in range(cell_n):#1 and -1 indicates the presence of a and b
     curr_pos[loc_a[0, i],loc_a[1, i]] = 1
     curr_pos[loc_b[0, i],loc_b[1, i]] = -1 
 
-tmax = 10000#100000 in Figure 3c and SupFig 5
-sl_max = 10#2 in SupFig 5b and SupFig 1
+tmax = 10000#100000 in Fig 4C and SupFig 3
+sl_max = 10#2 in SupFig 3B and SummaryFig
 wid = 20#width of the painting area of matrix
 step = np.ones((2, cell_n)) * sl_max
 sig_a = 0.1#gain of sigmoid curve
@@ -45,11 +45,11 @@ cell_c = 10#Number of cell death
 cell_new = np.zeros((2, cell_c),dtype=int)
 
 for t in range(tmax -1):
-    if t < 0:# change to != 0 in case with cell death:#change to < 0 in cases without cell death
+    if t < 0:# change to != 0 in case with cell death:#when < 0, this part is skipped without cell death
         cell_new[0,:] = np.random.randint(frame, border_x-frame, size=cell_c).astype(int)
         cell_new[1,:] = np.random.randint(frame, border_y-frame, size=cell_c).astype(int)
         cell_i = np.random.randint(cell_n*2, size=cell_c)#index of killed cells
-        #cell_ch = int(cell_c/2)#Activate these 2 lines to kill improper cells in Fig 4g,i,k
+        #cell_ch = int(cell_c/2)#Activate these 2 lines to kill improper cells in Fig 4G,I,K
         #cell_i = np.append(np.argsort(step[0,:])[-cell_ch:],np.argsort(step[1,:])[-(cell_c-cell_ch):]+cell_n)
         for i in range(cell_c):
             if curr_pos[cell_new[0,i], cell_new[1,i]] == 0:            
@@ -67,19 +67,19 @@ for t in range(tmax -1):
 
     random_direction = np.random.rand(2, cell_n) * np.pi * 2
     #activate either sets from No1~No5
-#No1 independet, Fig 4a
+#No1 independet, Fig 4A
     #step[0,:] = np.random.exponential((0.1+sigmoid(x=-1*(ex_a[loc_a[0,:],loc_a[1,:]] - thre_a), a=sig_a)) * sl_max)
     #step[1,:] = np.random.exponential((0.1+sigmoid(x=-1*(ex_b[loc_b[0,:],loc_b[1,:]] - 2*thre_a), a=sig_a)) * sl_max)
-#No2 separation, Fig 4b, SupFig 1
+#No2 separation, Fig 4B, SummaryFig
 #    step[0,:] = np.random.exponential((0.1+sigmoid(x=-1*(ex_a[loc_a[0,:],loc_a[1,:]] - ex_b[loc_a[0,:],loc_a[1,:]] - thre_a), a=sig_a)) * sl_max)
 #    step[1,:] = np.random.exponential((0.1+sigmoid(x=-1*(ex_b[loc_b[0,:],loc_b[1,:]] - ex_a[loc_b[0,:],loc_b[1,:]] - 2*thre_a), a=sig_a)) * sl_max)
-#No3 spotted, Fig 4c,k,l
+#No3 spotted, Fig 4C,K,L
     #step[0,:] = np.random.exponential((0.1+sigmoid(x=-1*(ex_a[loc_a[0,:],loc_a[1,:]] - 2*thre_a), a=sig_a)) * sl_max)
     #step[1,:] = np.random.exponential((0.1+sigmoid(x=-1*(ex_a[loc_b[0,:],loc_b[1,:]] - thre_a), a=sig_a)+ sigmoid(x=1*(ex_a[loc_b[0,:],loc_b[1,:]] - thre_h), a=sig_h)) * sl_max)
-#No 4 faced lines, Fig 4d
+#No 4 faced lines, Fig 4D
     #step[0,:] = np.random.exponential((0.1+sigmoid(x=-1*(ex_a[loc_a[0,:],loc_a[1,:]]-2*thre_a), a=sig_a) + h_p*sigmoid(x=-1*(ex_b[loc_a[0,:],loc_a[1,:]]-thre_a), a=sig_a) + h_p*sigmoid(x=1*(ex_b[loc_a[0,:],loc_a[1,:]]-thre_h), a=sig_h)) * sl_max)
     #step[1,:] = np.random.exponential((0.1+sigmoid(x=-1*(ex_b[loc_b[0,:],loc_b[1,:]]-2*thre_a), a=sig_a) + h_p*sigmoid(x=-1*(ex_a[loc_b[0,:],loc_b[1,:]]-thre_a), a=sig_a) + h_p*sigmoid(x=1*(ex_a[loc_b[0,:],loc_b[1,:]]-thre_h), a=sig_h)) * sl_max)
-#No 5 striped, Fig 4 e~j, SupFig 5, movie 2
+#No 5 striped, Fig 4 E-J, SupFig 3, movie 3
     step[0,:] = np.random.exponential((0.1+sigmoid(x=-1*(ex_a[loc_a[0,:],loc_a[1,:]]-2*thre_a), a=sig_a)+sigmoid(x=1*(ex_a[loc_a[0,:],loc_a[1,:]]-2*thre_h), a=sig_h) + h_p*sigmoid(x=-1*(ex_b[loc_a[0,:],loc_a[1,:]]-thre_a/2), a=sig_a) + h_p*sigmoid(x=1*(ex_b[loc_a[0,:],loc_a[1,:]]-thre_h/2), a=sig_h)) * sl_max)
     step[1,:] = np.random.exponential((0.1+sigmoid(x=-1*(ex_b[loc_b[0,:],loc_b[1,:]]-2*thre_a), a=sig_a)+sigmoid(x=1*(ex_b[loc_b[0,:],loc_b[1,:]]-2*thre_h), a=sig_h) + h_p*sigmoid(x=-1*(ex_a[loc_b[0,:],loc_b[1,:]]-thre_a/2), a=sig_a) + h_p*sigmoid(x=1*(ex_a[loc_b[0,:],loc_b[1,:]]-thre_h/2), a=sig_h)) * sl_max)
 
@@ -147,4 +147,5 @@ for t in range(2001):#len(pos_data[0,0,:])):
 anim = animation.ArtistAnimation(fig, graphs, interval=10, repeat=False)
 plt.show()
 anim.save('movie2_pattern.gif', writer='pillow')
+#GIF file is converted to MP4 in Adobe web site.
 """
