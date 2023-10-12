@@ -21,6 +21,13 @@ plt.show()
 print([np.sum(result < 10**-2), np.sum(result > 10**3)])#np.sum(result>10**4)])
 
 #To make fitting curve in Fig 3F
+def truncated_power(x, b=10**-16,d=0.05,c=10**14,n=10**6):
+    a = n * b**d#158489
+    return a * (x + b)**(-d) * np.exp(-x/c)
+#The following can be considered for better fitting.
+def truncated_power2(x, b=10**-1,d=0.08,c=10**14,bb= 10**-28,dd=0.015,n=10**6):
+    a = n * b**d * bb**dd
+    return a * (x + b)**(-d) * (x + bb)**(-dd)* np.exp(-x/c)
 """
 # To estimate parameter values of fitting curves, curve fitting package from scipy was used
 #import curve fitting package from scipy
@@ -28,13 +35,6 @@ from scipy.optimize import curve_fit
 pars2, cov2 = curve_fit(f=truncated_power, xdata=sort_dist[:x_len], ydata=x,p0=[1e-14, 0.05, 10**15, 2*10**5] )
 a, b, c, d = pars2
 """
-def truncated_power(x, a=10**-16,b=0.05,c=10**14,n=10**6):
-    d = n * a**b#158489
-    return d * (x + a)**(-b) * np.exp(-x/c)
-#The following can be considered for better fitting.
-def truncated_power2(x, a=10**-1,b=0.08,c=10**14,aa= 10**-28,bb=0.015,n=10**6):
-    d = n * a**b * aa**bb
-    return d * (x + a)**(-b) * (x + aa)**(-bb)* np.exp(-x/c)
 
 step_length = np.ones(10**6 - 1)#without boundary#np.ones(len(traj[0,:]) - 1)
 for t in range(len(step_length)):
@@ -50,13 +50,13 @@ sort_sl_b = np.sort(step_length_b)[::-1]
 x_len_b = np.sum(sort_sl_b > 0)
 x_b = np.arange(1, x_len_b + 1)#range(len(distance))
 
-b = 0.05
-a = 10**(-16)
+d = 0.05
+b = 10**(-16)
 
 c1 = 10**14#for trajectory without boundary
-fit_curve_red = truncated_power(sort_sl[:x_len],a=a,b=b,c=c1,n=x_len)
+fit_curve_red = truncated_power(sort_sl[:x_len],b=b,d=d,c=c1,n=x_len)
 c2 = 10#for trajectory with boundary
-fit_curve_green = truncated_power(sort_sl_b[:x_len_b],a=a,b=b,c=c2,n=x_len_b)
+fit_curve_green = truncated_power(sort_sl_b[:x_len_b],b=b,d=d,c=c2,n=x_len_b)
 
 plt.plot(sort_sl_b[:x_len_b], x_b,'ob')
 plt.plot(sort_sl[:x_len], x,'ok')

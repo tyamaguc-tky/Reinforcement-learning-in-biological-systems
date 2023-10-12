@@ -140,6 +140,7 @@ def n_evaluation(bwalk, bwalk_d, n_in_M=n_direction0, value_M=value):#N_Evaluati
         value_M[i_loc[0,-1], i_loc[1,-1]] = 0#value of the final location is assigned to 0
     else:
         q_ts = value_M[i_loc[0,-1], i_loc[1,-1]]#The value of MCTS is V at the last location
+        
     for t in range(tlen - 1):#for the pathway in MCTS
         val = value_M[i_loc[0, t], i_loc[1, t]]#value of the location
         if val > q_ts:#MCTS makes the position better to some extent
@@ -147,6 +148,15 @@ def n_evaluation(bwalk, bwalk_d, n_in_M=n_direction0, value_M=value):#N_Evaluati
             value_M[i_loc[0,t], i_loc[1,t]] = val - (val - q_ts)/(tlen - t - 1) * 0.01#Value of the location will be same to expected value after the step
         else:#if MCTS fails
             value_M[i_loc[0,t],i_loc[1,t]] = val * 0.99 + q_ts * 0.01#Value of the location becomes worse
+    """# Thefollowing 7 lines can be used instead of the above 7 lines.
+    for t in range(tlen):#for the pathway in MCTS
+        val = value_M[i_loc[0, t], i_loc[1, t]]#value of the location
+        if val > q_ts:#MCTS makes the position better to some extent
+            n_in_M[i_loc[0,t], i_loc[1,t], bwalk_d[t]] += (val - q_ts) / val / (tlen - t)#Selected direction is added by the improved value per step
+            value_M[i_loc[0,t], i_loc[1,t]] = val - (val - q_ts)/(tlen - t) * 0.02#Value of the location will be same to expected value after the step
+        else:#if MCTS fails
+            value_M[i_loc[0,t],i_loc[1,t]] = val * 0.98 + q_ts * 0.02#Value of the location becomes worse
+    """
     return [n_in_M, value_M]#update N and V
 
 def random_walk(init_a=init_position, policy_a=policy, value_a=value, n_MCTS=repeat_MCTS):#Actual Walk
