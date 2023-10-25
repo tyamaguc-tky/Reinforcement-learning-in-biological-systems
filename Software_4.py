@@ -99,6 +99,7 @@ block1=np.array([[-200, -300], [300,-300],[300,300],[-300,300],[-300,-300],[-250
 block2=np.array([[0, 100], [-100,100],[-100,-100],[100,-100],[100,100],[50,100]]).T
 block3=np.array([[-10, -50], [50,-50],[50,50],[-50,50],[-50,-50],[-30,-50]]).T
 graphs = []
+plt.rcParams["font.size"] = 12
 fig = plt.figure()
 fig.set_figwidth(4)
 fig.set_figheight(4)
