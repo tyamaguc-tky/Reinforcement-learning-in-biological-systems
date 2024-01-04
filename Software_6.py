@@ -1,6 +1,6 @@
-# for Figure 5, maze
+#for Figure 5, maze
 #This simulation takes several months to complete
-#You can change the value testn to 10 or 100. 
+#Change the value testn to 10 or 100 to make the simulation period shorter. 
 #If testn = 10, 1 week. If testn = 100, 1 month is required to complete. 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -12,21 +12,21 @@ border = 500
 tmax = 10**5#Maximum number of steps in an Acutual walk
 mtmax = 100#Maximum number of steps in MCTS
 sl_p = 0.1#step-length is 0.1r
-target = np.array([0,0])
+target = np.array([0,0])#np.array([400,400])
 n_direction0 = np.ones((border*2,border*2,4),dtype=float)#N
 policy = np.zeros((border*2,border*2,4),dtype=float)#P
 value = np.ones((border*2,border*2), dtype=float) * border * 2#V
 for i in range(border*2):#initial value is the distance
     for j in range(border*2):
         value[i,j] = np.sqrt((i - border - target[0])**2 + (j - border - target[1])**2)
-testn = 1000#repetition times of Acutual Walk
-init_position = np.array([int(border*0.8),int(border*0.8)])#(400,400)
+testn = 100#repetition times of Acutual Walk
+init_position = np.array([int(border*0.8),int(border*0.8)])#(400,400)#np.array([0, 0])
 init_distance = np.sqrt(np.sum((init_position - target)**2))#565.685
 repeat_MCTS = 1000#number of repetitions of MCTS
 data_t = np.zeros(testn, dtype=int)#for recording
 trajectory_data = np.zeros((2, tmax, testn),dtype=float)
 
-def inside_out(x0, x1, y0, y1, block=50, gap=10):#same to Code_File_3
+def inside_out(x0, x1, y0, y1, block=50, gap=10):#same to Software_3
     xc = x1#next position
     yc = y1
     if np.abs(x0) < block:#current position is inside the block
@@ -148,7 +148,7 @@ def n_evaluation(bwalk, bwalk_d, n_in_M=n_direction0, value_M=value):#N_Evaluati
             value_M[i_loc[0,t], i_loc[1,t]] = val - (val - q_ts)/(tlen - t - 1) * 0.01#Value of the location will be same to expected value after the step
         else:#if MCTS fails
             value_M[i_loc[0,t],i_loc[1,t]] = val * 0.99 + q_ts * 0.01#Value of the location becomes worse
-    """# Thefollowing 7 lines can be used instead of the above 7 lines.
+    """# Thefollowing 7 lines can be used instead of the above 7 lines to get similar outcomes.
     for t in range(tlen):#for the pathway in MCTS
         val = value_M[i_loc[0, t], i_loc[1, t]]#value of the location
         if val > q_ts:#MCTS makes the position better to some extent
@@ -193,11 +193,11 @@ for i in range(testn):
     repeat_MCTS = int(0.9 * repeat_MCTS + 0.1 * data_t[i] * (v_rw + 1))#typically one tenth of step number of random walk
     policy = p_evaluation(policy_n=policy, n_final=n_direction, n_MCTS=repeat_MCTS)
     trajectory_data[:,:data_t[i],i] = twalk#for recording
-#    if  i == 9:#for recording
-#        policy10 = np.array(policy)
-#        value10 = np.array(value)
+    if  i == 9:#for recording
+        policy10 = np.array(policy)
+        value10 = np.array(value)
 
-#np.savez_compressed('maze', policy=policy, policy10=policy10, value=value, value10=value10, data=trajectory_data)
+np.savez_compressed('maze_bsrw', policy=policy, policy10=policy10, value=value, value10=value10, data=trajectory_data)
 #loaded = np.load('maze.npz')
 #trajectory_data = loaded['data']
 #policy = loaded['policy']

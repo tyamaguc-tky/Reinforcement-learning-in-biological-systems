@@ -1,6 +1,7 @@
 #Two components change the numbers by stochastic increase and decrease.
 #Simulation of the regulation with reinforcement learning (Fig 1B).
-#For the deterministic regulation (Fig 1D), change the values of amp, add, 
+#For the deterministic regulation (Fig 1D), change the values of amp and add
+#In SupFig S2, amp=0, add=0.001, lines 31-40 are activated  
 import numpy as np
 xAxB = np.array([1, 1])#initial values of x_a and x_b
 target = np.array([1, 2])
@@ -27,6 +28,17 @@ for t in range(tmax):#repeat for tmax times
         xratio = xAxB/np.sum(xAxB)#current ratio
         if amp != 0:#regulation with reinforcement learning
             dec = np.max([np.sum((xratio - target_ratio)**2)/2/10, dec_min])#MSE/10
+            """#For Fig S2 stepwise decay 
+            mse01 = np.sum((xratio - target_ratio)**2)/2/10
+            if mse01 < dec_min:
+                dec = dec_min
+            elif mse01 < dec_min*2:
+                dec = dec_min*2
+            elif mse01 < dec_min*20:
+                dec = dec_min*20
+            else:
+                dec = dec_min*200
+            """
         else:#determinstic regulation
             dec = dec_min
         xAxB = np.random.binomial(xAxB, 1 - dec)#binomial distribution with the probability of 1-dec

@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 #Code for visualization of Figure 3 are written in coment mode
-#Using Code_file_3, simulation results are obtained.
+#Using Software_3, simulation results are obtained.
 """
 for test in range(test_n):
     result[test] = random_walk_1D(init_pos=10, tmax=100)
@@ -66,7 +66,6 @@ plt.ylim(10**4, 2*10**6)
 plt.xscale('log')
 plt.yscale('log')
 plt.show()
-
 
 #trajectory Figure
 #To make Figure 3E, G # for Fig 3G blocks should be activated
